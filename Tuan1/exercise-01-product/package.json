@@ -1,0 +1,11 @@
+{
+  "name": "exercise-01-product",
+  "version": "1.0.0",
+  "description": "Product constructor function and array methods",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "author": "Đoàn Đức Long - 2280601744",
+  "license": "ISC"
+}
