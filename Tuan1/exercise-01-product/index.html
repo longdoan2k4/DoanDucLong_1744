@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý sản phẩm</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #ffffff;
+            color: #222;
+            padding: 16px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .section {
+            margin-bottom: 24px;
+            padding: 12px 0;
+            border-top: 1px solid #ddd;
+        }
+
+        .section h2 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .section p {
+            line-height: 1.6;
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+
+        table th, table td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background: #f2f2f2;
+            font-weight: 600;
+        }
+
+        .badge {
+            padding: 2px 6px;
+            border: 1px solid #ccc;
+            font-size: 12px;
+        }
+
+        .highlight {
+            padding: 8px;
+            border: 1px solid #ddd;
+            margin-top: 6px;
+        }
+
+        .answer {
+            font-weight: bold;
+            margin-top: 6px;
+        }
+
+        .price {
+            font-weight: 600;
+        }
+
+        pre {
+            background: #f7f7f7;
+            border: 1px solid #ddd;
+            padding: 8px;
+            overflow-x: auto;
+            margin-top: 6px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HỆ THỐNG QUẢN LÝ SẢN PHẨM</h1>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        // Product class
+        function Product(id, name, price, quantity, category, isAvailable) {
+            this.id = id;
+            this.name = name;
+            this.price = price;
+            this.quantity = quantity;
+            this.category = category;
+            this.isAvailable = isAvailable;
+        }
+
+        // Initialize products
+        const products = [
+            new Product(1, 'iPhone 15 Pro Max', 32000000, 15, 'Electronics', true),
+            new Product(2, 'Samsung Galaxy S24 Ultra', 28000000, 20, 'Electronics', true),
+            new Product(3, 'MacBook Pro M3', 45000000, 8, 'Electronics', true),
+            new Product(4, 'AirPods Pro 2', 6500000, 0, 'Accessories', true),
+            new Product(5, 'Apple Watch Ultra 2', 22000000, 12, 'Accessories', true),
+            new Product(6, 'Magic Keyboard', 3500000, 5, 'Accessories', false),
+            new Product(7, 'iPad Air M2', 18000000, 10, 'Electronics', true),
+            new Product(8, 'USB-C Cable', 500000, 50, 'Accessories', true)
+        ];
+
+        let html = '';
+
+        // DANH SÁCH TẤT CẢ SẢN PHẨM
+        html += '<div class="section">';
+        html += '<h2>DANH SÁCH TẤT CẢ SẢN PHẨM</h2>';
+        html += '<table><tr><th>ID</th><th>Tên</th><th>Giá</th><th>Số lượng</th><th>Loại</th><th>Trạng thái</th></tr>';
+        products.forEach(p => {
+            const status = p.isAvailable ? '<span class="badge badge-available">Đang bán</span>' : '<span class="badge badge-unavailable">Ngừng bán</span>';
+            html += `<tr><td>${p.id}</td><td>${p.name}</td><td class="price">${p.price.toLocaleString('vi-VN')} VNĐ</td><td>${p.quantity}</td><td>${p.category}</td><td>${status}</td></tr>`;
+        });
+        html += '</table></div>';
+
+        // CÂU 3: MẢNG CHỈ CHỨA NAME VÀ PRICE
+        const productNamePrice = products.map(product => ({
+            name: product.name,
+            price: product.price
+        }));
+        html += '<div class="section">';
+        html += '<h2>CÂU 3: MẢNG CHỈ CHỨA NAME VÀ PRICE</h2>';
+        html += '<pre>' + JSON.stringify(productNamePrice, null, 2) + '</pre>';
+        html += '</div>';
+
+        // CÂU 4: SẢN PHẨM CÒN HÀNG TRONG KHO
+        const productsInStock = products.filter(product => product.quantity > 0);
+        html += '<div class="section">';
+        html += '<h2>CÂU 4: SẢN PHẨM CÒN HÀNG TRONG KHO</h2>';
+        html += `<p>Tổng số sản phẩm còn hàng: <strong>${productsInStock.length}/${products.length}</strong></p>`;
+        html += '<table><tr><th>Tên</th><th>Giá</th><th>Số lượng</th></tr>';
+        productsInStock.forEach(p => {
+            html += `<tr><td>${p.name}</td><td class="price">${p.price.toLocaleString('vi-VN')} VNĐ</td><td><span class="badge badge-instock">${p.quantity}</span></td></tr>`;
+        });
+        html += '</table></div>';
+
+        // CÂU 5: CÓ SẢN PHẨM GIÁ TRÊN 30 TRIỆU?
+        const hasExpensiveProduct = products.some(product => product.price > 30000000);
+        html += '<div class="section">';
+        html += '<h2>CÂU 5: CÓ SẢN PHẨM GIÁ TRÊN 30 TRIỆU?</h2>';
+        html += `<div class="answer">${hasExpensiveProduct ? 'Có' : 'Không'}</div>`;
+        if (hasExpensiveProduct) {
+            const expensiveProducts = products.filter(p => p.price > 30000000);
+            html += '<div class="highlight">';
+            expensiveProducts.forEach(p => {
+                html += `<p>${p.name}: <strong class="price">${p.price.toLocaleString('vi-VN')} VNĐ</strong></p>`;
+            });
+            html += '</div>';
+        }
+        html += '</div>';
+
+        // CÂU 6: TẤT CẢ PHỤ KIỆN ĐANG ĐƯỢC BÁN?
+        const accessoriesProducts = products.filter(product => product.category === 'Accessories');
+        const allAccessoriesAvailable = accessoriesProducts.every(product => product.isAvailable === true);
+        html += '<div class="section">';
+        html += '<h2>CÂU 6: TẤT CẢ PHỤ KIỆN ĐANG ĐƯỢC BÁN?</h2>';
+        html += `<div class="answer">${allAccessoriesAvailable ? 'Có' : 'Không'}</div>`;
+        html += '<table><tr><th>Tên</th><th>Trạng thái</th></tr>';
+        accessoriesProducts.forEach(p => {
+            const status = p.isAvailable ? '<span class="badge badge-available">Đang bán</span>' : '<span class="badge badge-unavailable">Ngừng bán</span>';
+            html += `<tr><td>${p.name}</td><td>${status}</td></tr>`;
+        });
+        html += '</table></div>';
+
+        // CÂU 7: TỔNG GIÁ TRỊ KHO HÀNG
+        const totalInventoryValue = products.reduce((total, product) => {
+            return total + (product.price * product.quantity);
+        }, 0);
+        html += '<div class="section">';
+        html += '<h2>CÂU 7: TỔNG GIÁ TRỊ KHO HÀNG</h2>';
+        html += `<div class="highlight"><strong class="price">${totalInventoryValue.toLocaleString('vi-VN')} VNĐ</strong></div>`;
+        html += '</div>';
+
+        // CÂU 8: DUYỆT MẢNG VỚI FOR...OF
+        html += '<div class="section">';
+        html += '<h2>CÂU 8: DUYỆT MẢNG VỚI FOR...OF</h2>';
+        html += '<table><tr><th>Sản phẩm</th><th>Loại</th><th>Trạng thái</th></tr>';
+        for (const product of products) {
+            const status = product.isAvailable ? 'Đang bán' : 'Ngừng bán';
+            html += `<tr><td>${product.name}</td><td>${product.category}</td><td>${status}</td></tr>`;
+        }
+        html += '</table></div>';
+
+        // CÂU 9: DUYỆT THUỘC TÍNH VỚI FOR...IN
+        html += '<div class="section">';
+        html += '<h2>CÂU 9: DUYỆT THUỘC TÍNH VỚI FOR...IN</h2>';
+        html += '<p><strong>Ví dụ với sản phẩm đầu tiên:</strong></p>';
+        html += '<table><tr><th>Thuộc tính</th><th>Giá trị</th></tr>';
+        for (const key in products[0]) {
+            html += `<tr><td><strong>${key}</strong></td><td>${products[0][key]}</td></tr>`;
+        }
+        html += '</table></div>';
+
+        // CÂU 10: SẢN PHẨM ĐANG BÁN VÀ CÒN HÀNG
+        const availableInStockProducts = products
+            .filter(product => product.isAvailable === true && product.quantity > 0)
+            .map(product => product.name);
+        html += '<div class="section">';
+        html += '<h2>CÂU 10: SẢN PHẨM ĐANG BÁN VÀ CÒN HÀNG</h2>';
+        html += '<table><tr><th>Sản phẩm</th></tr>';
+        availableInStockProducts.forEach(name => {
+            html += `<tr><td>${name}</td></tr>`;
+        });
+        html += '</table></div>';
+
+        document.getElementById('output').innerHTML = html;
+    </script>
+</body>
+</html>
